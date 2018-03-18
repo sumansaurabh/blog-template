@@ -1654,20 +1654,1220 @@
     </div>
 
   </div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 8: Clustering</button>
-  <div id="clustering" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 9: Feature Scaling</button>
-  <div id="f_scaling" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 10: Text Learning</button>
-  <div id="text_learning" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 11: Feature Selection</button>
-  <div id="feature_selection" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 12: PCA</button>
-  <div id="pca" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 13: Validation</button>
-  <div id="validation" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 14: Evaluation Metrices</button>
-  <div id="evaluation_metrices" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#clustering">Lesson 8: Clustering</button>
+  <div id="clustering" class="collapse">
+    <a href="" ng-click="click_view('clustering-exercise1', 'clustering')"><h3>Exercise 1: Clustering Features</h3></a>
+    <div ng-if="curr_view==='clustering-exercise1'">
+      <h4 class="h4-code">Clustering Features</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/outliers')
+
+
+          import pickle
+          import numpy
+          import matplotlib.pyplot as plt
+          from feature_format import featureFormat, targetFeatureSplit
+
+          %matplotlib inline
+
+
+
+          def Draw(pred, features, poi, mark_poi=True, name="image.png", f1_name="feature 1", f2_name="feature 2"):
+              """ some plotting code designed to help you visualize your clusters """
+
+              ### plot each cluster with a different color--add more colors for
+              ### drawing more than five clusters
+              colors = ["b", "c", "k", "m", "g"]
+              for ii, pp in enumerate(pred):
+                  plt.scatter(features[ii][0], features[ii][1], color = colors[pred[ii]])
+
+              ### if you like, place red stars over points that are POIs (just for funsies)
+              if mark_poi:
+                  for ii, pp in enumerate(pred):
+                      if poi[ii]:
+                          plt.scatter(features[ii][0], features[ii][1], color="r", marker="*")
+              plt.xlabel(f1_name)
+              plt.ylabel(f2_name)
+
+
+
+          ### load in the dict of dicts containing all the data on each person in the dataset
+          data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r") )
+          ### there's an outlier--remove it! 
+          data_dict.pop("TOTAL", 0)
+
+
+          # the features to be used
+          features_list = ['poi', 'salary', 'exercised_stock_options']
+
+          def finance_kmeans(data_dict, features_list):
+              data = featureFormat(data_dict, features_list )
+              poi, finance_features = targetFeatureSplit( data )
+
+              # plot the first 2 features
+              for f in finance_features:
+                  plt.scatter( f[0], f[1] )
+
+              # k-means clustering
+              from sklearn.cluster import KMeans
+              clf = KMeans(2)
+              clf.fit(finance_features)
+              pred = clf.predict(finance_features)
+
+              # show the clustering
+              Draw(pred, finance_features, poi, mark_poi=False, name="clusters.pdf", f1_name=features_list[1], f2_name=features_list[2])
+              
+              return None
+              
+
+          finance_kmeans(data_dict, features_list)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/clustering_features.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('clustering-exercise2', 'clustering')"><h3>Exercise 2: Clustering with 3 Features</h3></a>
+    <div ng-if="curr_view==='clustering-exercise2'">
+      <h4 class="h4-code">Clustering with 3 Features</h4>
+      <pre>
+        <code class="python">
+          features_list = ['poi', 'salary', 'exercised_stock_options', 'total_payments']
+
+          finance_kmeans(data_dict, features_list)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/clustering_with_3_features.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('clustering-exercise3', 'clustering')"><h3>Exercise 3: Stock Option Range</h3></a>
+    <div ng-if="curr_view==='clustering-exercise3'">
+      <h4 class="h4-code">Stock Option Range</h4>
+      <pre>
+        <code class="python">
+          import pandas as pd
+
+          df = pd.DataFrame(data_dict)
+          df.loc['exercised_stock_options',:] = pd.to_numeric(df.loc['exercised_stock_options',:], errors='coerce')
+          print df.loc['exercised_stock_options',:].max(skipna=True)
+          print df.loc['exercised_stock_options',:].min(skipna=True)
+          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Max : 34348384.0
+            Min: 3285.0 
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('clustering-exercise4', 'clustering')"><h3>Exercise 4: Salary Range</h3></a>
+    <div ng-if="curr_view==='clustering-exercise4'">
+      <h4 class="h4-code">Salary Range</h4>
+      <pre>
+        <code class="python">
+          df.loc['salary',:] = pd.to_numeric(df.loc['salary',:], errors='coerce')
+          print df.loc['salary',:].max(skipna=True)
+          print df.loc['salary',:].min(skipna=True)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Max : 1111258.0
+            Min: 477.0
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#f_scaling">Lesson 9: Feature Scaling</button>
+  <div id="f_scaling" class="collapse">
+    <a href="" ng-click="click_view('f_scaling-exercise1', 'f_scaling')"><h3>Exercise 1: Min/Max Scaler in sklearn</h3></a>
+    <div ng-if="curr_view==='f_scaling-exercise1'">
+      <h4 class="h4-code">Min/Max Scaler in sklearn</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/outliers')
+
+
+          import numpy as np
+          from sklearn.preprocessing import MinMaxScaler
+
+          weights = np.array([[115.], [140.], [175.]])
+          scaler = MinMaxScaler()
+          rescaled_weight = scaler.fit_transform(weights)
+          
+        </code>
+      </pre>
+    </div>
+
+    <a href="" ng-click="click_view('f_scaling-exercise2', 'f_scaling')"><h3>Exercise 2: Computing Rescaled Features</h3></a>
+    <div ng-if="curr_view==='f_scaling-exercise2'">
+      <h4 class="h4-code">Computing Rescaled Features</h4>
+      <pre>
+        <code class="python">
+          import pickle
+          import numpy
+          #import matplotlib.pyplot as plt
+          from feature_format import featureFormat, targetFeatureSplit
+
+          ### load in the dict of dicts containing all the data on each person in the dataset
+          data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r") )
+          ### there's an outlier--remove it! 
+          data_dict.pop("TOTAL", 0)
+
+          # the features to be used
+          features_list = ['poi', 'salary', 'exercised_stock_options']
+
+          data = featureFormat(data_dict, features_list)
+
+          _, salary, stock = zip(*data)
+
+          # put the features into 2-D numpy arrays
+          salary = np.array(salary).reshape((len(salary),1))
+          stock = np.array(stock).reshape((len(stock),1))
+
+          # rescale
+          scaler = MinMaxScaler()
+          salary = scaler.fit_transform(salary)
+          print '$200,000 becomes {0}'.format(scaler.transform([[200000.]])[0][0])
+
+          stock = scaler.fit_transform(stock)
+          print '$1,000,000 becomes {0}'.format(scaler.transform([[1000000.]])[0][0])
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            $200,000 becomes 0.179976207145
+            $1,000,000 becomes 0.0291134511597
+          </code>
+        </pre>
+      </div>
+    </div>
+
+
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#text_learning">Lesson 10: Text Learning</button>
+  <div id="text_learning" class="collapse">
+    <a href="" ng-click="click_view('text_learning-exercise1', 'text_learning')"><h3>Exercise 1: Bag of Words in sklearn</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise1'">
+      <h4 class="h4-code">Bag of Words in sklearn</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/text_learning')
+
+
+          from sklearn.feature_extraction.text import CountVectorizer
+          vectorizer = CountVectorizer()
+
+          string1 = '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pharetra ornare lacinia. 
+          Cras et facilisis sem. Mauris fermentum nec dui at aliquam. Mauris ante justo, aliquam 
+          eget facilisis ac, elementum eget dolor. Nulla lacinia ac lorem vel tempus. Vivamus condimentum 
+          vulputate semper. Nullam dictum, mauris dignissim auctor suscipit, dui turpis elementum turpis, 
+          et tempor urna diam sed nisl. Vestibulum mollis quam at nisl egestas tincidunt. Nullam ut nibh 
+          fringilla, ultricies neque vel, tempor erat. Phasellus vel sem vitae ligula viverra luctus hendrerit 
+          ac quam. Vivamus dignissim, diam sed porttitor lacinia, elit erat lobortis tellus, nec euismod dolor turpis a leo.'''
+
+          string2 = '''Mauris felis nibh, tempor ac pulvinar sed, feugiat at neque. In enim elit, venenatis nec magna eu, vestibulum 
+          lobortis libero. Nullam scelerisque pulvinar ex consectetur tempor. Morbi congue quis leo auctor facilisis. Mauris 
+          et diam ultricies, interdum nisi ac, condimentum turpis. Donec a risus sed dolor blandit ultrices. Nulla ac ultrices 
+          elit. Nulla dictum metus tortor, in sollicitudin enim rutrum id. Nulla magna felis, molestie vel odio et, congue ornare 
+          nisi. Nunc molestie, mi non blandit sodales, neque diam varius quam, nec tempus metus neque vel nibh. Morbi sit amet 
+          sapien nec ipsum feugiat lacinia ut eu orci. Mauris id enim tincidunt, aliquet augue quis, vehicula libero. Donec eu 
+          laoreet nibh.'''
+
+          string3 = '''Donec urna massa, faucibus et interdum id, facilisis interdum augue. Nunc enim nulla, tristique sit amet velit 
+          in, lacinia mollis mi. Nullam malesuada felis sed libero porttitor dapibus ut quis dolor. Curabitur vitae neque 
+          at arcu condimentum suscipit. Quisque sollicitudin est a elit sollicitudin, ac consectetur nisi blandit. Vestibulum 
+          rhoncus viverra orci, et porta purus maximus quis. Pellentesque consectetur velit eget orci rutrum mollis. Nullam 
+          condimentum vehicula ante at dignissim. Curabitur gravida, lorem in vehicula gravida, enim arcu semper nulla, 
+          id tempor magna eros vel tortor.'''
+
+          email_list = [string1, string2, string3]
+
+          bag_of_words = vectorizer.fit_transform(email_list)
+
+          print vectorizer.vocabulary_.get('id')
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>43</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('text_learning-exercise2', 'text_learning')"><h3>Exercise 2: Getting Stopwords from NLTK</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise2'">
+      <h4 class="h4-code">Getting Stopwords from NLTK</h4>
+      <pre>
+        <code class="python">
+          from nltk.corpus import stopwords
+          sw = stopwords.words('english')
+          print 'Number of stopwords: {0}'.format(len(sw))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Number of stopwords: 153
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('text_learning-exercise3', 'text_learning')"><h3>Exercise 3: Stemming with nltk</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise3'">
+      <h4 class="h4-code">Stemming with nltk</h4>
+      <pre>
+        <code class="python">
+          from nltk.stem.snowball import SnowballStemmer
+          stemmer = SnowballStemmer('english')
+          print stemmer.stem('responsiveness')
+          print stemmer.stem('responsivity')
+          print stemmer.stem('unresponsive')
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            respons
+            respons
+            unrespons
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('text_learning-exercise4', 'text_learning')"><h3>Exercise 4: Warming Up with parseOutText()</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise4'">
+      <h4 class="h4-code">Warming Up with parseOutText()</h4>
+      <pre>
+        <code class="python">
+          import string
+
+          def parseOutText(f):
+              """ given an opened email file f, parse out all text below the
+                  metadata block at the top
+                  (in Part 2, you will also add stemming capabilities)
+                  and return a string that contains all the words
+                  in the email (space-separated) 
+                  
+                  example use case:
+                  f = open("email_file_name.txt", "r")
+                  text = parseOutText(f)
+                  
+                  """
+
+
+              f.seek(0)  ### go back to beginning of file (annoying)
+              all_text = f.read()
+
+              ### split off metadata
+              content = all_text.split("X-FileName:")
+              words = ""
+              if len(content) > 1:
+                  ### remove punctuation
+                  text_string = content[1].translate(string.maketrans("", ""), string.punctuation)
+
+                  words = text_string
+                  
+              return words
+              
+
+          ff = open("../text_learning/test_email.txt", "r")
+          text = parseOutText(ff)
+          print text
+
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>If you can read this message youre properly using parseOutText  Please proceed to the next part of the project</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('text_learning-exercise5', 'text_learning')"><h3>Exercise 5: Deploying Stemming</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise5'">
+      <h4 class="h4-code">Deploying Stemming</h4>
+      <pre>
+        <code class="python">
+          from nltk.stem.snowball import SnowballStemmer
+
+          def parseOutText(f):
+              '''
+              Input: a file containing text
+              
+              Output: the stemmed words in the input text, all separated by a single space
+              '''
+              f.seek(0)  ### go back to beginning of file (annoying)
+              all_text = f.read()
+
+              ### split off metadata
+              content = all_text.split("X-FileName:")
+              
+              # the stemmer
+              stemmer = SnowballStemmer('english')
+              
+              # the string of words
+              words = ""
+              
+              if len(content) > 1:
+                  ### remove punctuation
+                  text_string = content[1].translate(string.maketrans("", ""), string.punctuation)
+
+                  ### split the text string into individual words, stem each word,
+                  ### and append the stemmed word to words (make sure there's a single
+                  ### space between each stemmed word)
+                  for word in text_string.split():
+                      # stem the word and add it to words
+                      words += stemmer.stem(word) + ' '       
+                  
+              return words[:-1]
+              
+
+          ff = open("../text_learning/test_email.txt", "r")
+          text = parseOutText(ff)
+          print text
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>if you can read this messag your proper use parseouttext pleas proceed to the next part of the project</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('text_learning-exercise6', 'text_learning')"><h3>Exercise 6: Clean Away "Signature Words"</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise6'">
+      <h4 class="h4-code">Clean Away "Signature Words"</h4>
+      <pre>
+        <code class="python">
+          import pickle
+          from sklearn.feature_extraction.text import TfidfVectorizer
+
+          """
+              Starter code to process the emails from Sara and Chris to extract
+              the features and get the documents ready for classification.
+
+              The list of all the emails from Sara are in the from_sara list
+              likewise for emails from Chris (from_chris)
+
+              The actual documents are in the Enron email dataset, which
+              you downloaded/unpacked in Part 0 of the first mini-project. If you have
+              not obtained the Enron email corpus, run startup.py in the tools folder.
+
+              The data is stored in lists and packed away in pickle files at the end.
+          """
+
+          sw = ["sara", "shackleton", "chris", "germani"]
+          with open("from_sara.txt", "r") as from_sara, open("from_chris.txt", "r") as from_chris:
+
+              from_data = []
+              word_data = []
+
+              ### temp_counter is a way to speed up the development--there are
+              ### thousands of emails from Sara and Chris, so running over all of them
+              ### can take a long time
+              ### temp_counter helps you only look at the first 200 emails in the list so you
+              ### can iterate your modifications quicker
+              temp_counter = 0
+
+
+              for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
+                  for path in from_person:
+                      ### only look at first 200 emails when developing
+                      ### once everything is working, remove this line to run over full dataset
+                      
+                      #temp_counter += 1
+                      if temp_counter < 200:
+                          path = os.path.join('..', path[:-1])
+
+                          with open(path, 'r') as email:
+                              ### use parseOutText to extract the text from the opened email
+                              text = parseOutText(email)
+
+                              ### use str.replace() to remove any instances of the words
+                              ### ["sara", "shackleton ", "chris", "germani"]
+                              for word in sw:
+                                  if(word in text):
+                                      text = text.replace(word, "")
+
+                              ### append the text to word_data
+                              word_data.append(text.replace('\n',' ').strip())
+
+                              ### append a 0 to from_data if email is from Sara, and 1 if email is from Chris
+                              if name=='sara':
+                                  from_data.append(0)
+                              else:
+                                  from_data.append(1)
+
+          pickle.dump( word_data, open("your_word_data.pkl", "w") )
+          pickle.dump( from_data, open("your_email_authors.pkl", "w") )
+
+          print word_data[152]
+
+          # word data is a list of strings that we get by stemming the emails
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>tjonesnsf stephani and sam need nymex calendar</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('text_learning-exercise7', 'text_learning')"><h3>Exercise 7: TfIdf it</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise7'">
+      <h4 class="h4-code">TfIdf it</h4>
+      <pre>
+        <code class="python">
+          ### in Part 4, do TfIdf vectorization here
+          vectorizer = TfidfVectorizer(stop_words="english", lowercase=True)
+          vectorizer.fit_transform(word_data)
+
+          feature_names = vectorizer.get_feature_names()
+
+          print 'Number of different words: {0}'.format(len(feature_names))
+
+          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Number of different words: 38757
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('text_learning-exercise8', 'text_learning')"><h3>Exercise 8: Accessing TfIdf features</h3></a>
+    <div ng-if="curr_view==='text_learning-exercise8'">
+      <h4 class="h4-code">Accessing TfIdf features</h4>
+      <pre>
+        <code class="python">
+          print feature_names[34597]
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>stephaniethank</span>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#feature_selection">Lesson 11: Feature Selection</button>
+  <div id="feature_selection" class="collapse">
+    <a href="" ng-click="click_view('feature_selection-exercise1', 'feature_selection')"><h3>Exercise 1: Number of Features and Overfitting</h3></a>
+    <div ng-if="curr_view==='feature_selection-exercise1'">
+      <h4 class="h4-code">Number of Features and Overfitting</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/feature_selection')
+        </code>
+      </pre>
+      <pre>
+        <code class="python">
+          import pickle
+          import numpy
+          numpy.random.seed(42)
+
+
+          words_file = "../text_learning/your_word_data.pkl" 
+          authors_file = "../text_learning/your_email_authors.pkl"
+              
+          def my_func(words_file, authors_file):
+              '''
+              I will use this code later in the lesson so I made it a function
+              '''
+              
+              ### The words (features) and authors (labels), already largely processed.
+              ### These files should have been created from the previous (Lesson 10)
+              ### mini-project.
+              word_data = pickle.load( open(words_file, "r"))
+              authors = pickle.load( open(authors_file, "r") )
+
+
+
+              ### test_size is the percentage of events assigned to the test set (the
+              ### remainder go into training)
+              ### feature matrices changed to dense representations for compatibility with
+              ### classifier functions in versions 0.15.2 and earlier
+              from sklearn import cross_validation
+              features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(word_data, authors, test_size=0.1, random_state=42)
+
+              from sklearn.feature_extraction.text import TfidfVectorizer
+              vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
+                                           stop_words='english')
+              features_train = vectorizer.fit_transform(features_train)
+              features_test  = vectorizer.transform(features_test).toarray()
+
+
+              ### a classic way to overfit is to use a small number
+              ### of data points and a large number of features;
+              ### train on only 150 events to put ourselves in this regime
+              features_train = features_train[:150].toarray()
+              labels_train   = labels_train[:150]
+
+
+              from sklearn.tree import DecisionTreeClassifier
+
+              clf = DecisionTreeClassifier()
+              clf.fit(features_train, labels_train)
+              
+              return clf, vectorizer, features_train, features_test, labels_train, labels_test
+
+
+          (clf, vectorizer, features_train, features_test, labels_train, labels_test) = my_func(words_file, authors_file)
+
+          print 'Number of training points = {0}'.format(len(features_train))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Number of training points = 150
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('feature_selection-exercise1', 'feature_selection')"><h3>Exercise 2: Accuracy of Your Overfit Decision Tree</h3></a>
+    <div ng-if="curr_view==='feature_selection-exercise2'">
+      <h4 class="h4-code">Accuracy of Your Overfit Decision Tree</h4>
+      <pre>
+        <code class="python">
+          print 'Accuracy on test set = {0}'.format(clf.score(features_test, labels_test))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Accuracy on test set = 0.947667804323
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('feature_selection-exercise1', 'feature_selection')"><h3>Exercise 3: Identify the Most Powerful Features and Use TfIdf to Get the Most Important Word</h3></a>
+    <div ng-if="curr_view==='feature_selection-exercise3'">
+      <h4 class="h4-code">Identify the Most Powerful Features and Use TfIdf to Get the Most Important Word</h4>
+      <pre>
+        <code class="python">
+          top_features = [(number, feature, vectorizer.get_feature_names()[number]) for number, feature in 
+            zip(range(len(clf.feature_importances_)), clf.feature_importances_) if feature > 0.2]
+          print top_features
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>[(33614, 0.76470588235294124, u'sshacklensf')]</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('feature_selection-exercise1', 'feature_selection')"><h3>Exercise 4: Re-Process the Text</h3></a>
+    <div ng-if="curr_view==='feature_selection-exercise4'">
+      <h4 class="h4-code">Re-Process the Text</h4>
+      <pre>
+        <code class="python">
+          import string
+          from nltk.stem.snowball import SnowballStemmer
+
+          def parseOutText(f):
+              '''
+              Input: a file containing text
+              
+              Output: the stemmed words in the input text, all separated by a single space
+              '''
+              f.seek(0)  ### go back to beginning of file (annoying)
+              all_text = f.read()
+
+              ### split off metadata
+              content = all_text.split("X-FileName:")
+              
+              # the stemmer
+              stemmer = SnowballStemmer('english')
+              
+              # the string of words
+              words = ""
+              
+              if len(content) > 1:
+                  ### remove punctuation
+                  text_string = content[1].translate(string.maketrans("", ""), string.punctuation)
+
+                  ### split the text string into individual words, stem each word,
+                  ### and append the stemmed word to words (make sure there's a single
+                  ### space between each stemmed word)
+                  for word in text_string.split():
+                      # stem the word and add it to words
+                      words += stemmer.stem(word) + ' '       
+                  
+              return words[:-1]
+              
+
+          ff = open("../text_learning/test_email.txt", "r")
+          text = parseOutText(ff)
+        </code>
+      </pre>
+      <pre>
+        <code class="python">
+          from sklearn.feature_extraction.text import TfidfVectorizer
+
+          """
+              Starter code to process the emails from Sara and Chris to extract
+              the features and get the documents ready for classification.
+
+              The list of all the emails from Sara are in the from_sara list
+              likewise for emails from Chris (from_chris)
+
+              The actual documents are in the Enron email dataset, which
+              you downloaded/unpacked in Part 0 of the first mini-project. If you have
+              not obtained the Enron email corpus, run startup.py in the tools folder.
+
+              The data is stored in lists and packed away in pickle files at the end.
+          """
+
+          def sara_and_chris(sw):
+              '''
+              I'm going to reuse this code later so I'm making it a function
+              '''
+              
+              with open("../text_learning/from_sara.txt", "r") as from_sara, open("../text_learning/from_chris.txt", "r") as from_chris:
+
+                  from_data = []
+                  word_data = []
+
+                  ### temp_counter is a way to speed up the development--there are
+                  ### thousands of emails from Sara and Chris, so running over all of them
+                  ### can take a long time
+                  ### temp_counter helps you only look at the first 200 emails in the list so you
+                  ### can iterate your modifications quicker
+                  temp_counter = 0
+
+
+                  for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
+                      for path in from_person:
+                          ### only look at first 200 emails when developing
+                          ### once everything is working, remove this line to run over full dataset
+
+                          #temp_counter += 1
+                          if temp_counter < 200:
+                              path = os.path.join('..', path[:-1])
+
+                              with open(path, 'r') as email:
+                                  ### use parseOutText to extract the text from the opened email
+                                  text = parseOutText(email)
+
+                                  ### use str.replace() to remove any instances of the words
+                                  ### ["sara", "shackleton ", "chris", "germani"]
+                                  for word in sw:
+                                      if(word in text):
+                                          text = text.replace(word, "")
+
+                                  ### append the text to word_data
+                                  word_data.append(text.replace('\n',' ').strip())
+
+                                  ### append a 0 to from_data if email is from Sara, and 1 if email is from Chris
+                                  if name=='sara':
+                                      from_data.append(0)
+                                  else:
+                                      from_data.append(1)
+
+              pickle.dump( word_data, open("your_word_data.pkl", "w") )
+              pickle.dump( from_data, open("your_email_authors.pkl", "w") )
+              
+              return None
+
+
+          sw = ["sara", "shackleton", "chris", "germani", "sshacklensf"]
+          sara_and_chris(sw)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('feature_selection-exercise1', 'feature_selection')"><h3>Exercise 5: Re-Fit the Model and Find the Outlier</h3></a>
+    <div ng-if="curr_view==='feature_selection-exercise5'">
+      <h4 class="h4-code">Re-Fit the Model and Find the Outlier</h4>
+      <pre>
+        <code class="python">
+          words_file = 'your_word_data.pkl'
+          authors_file = 'your_email_authors.pkl'
+
+          (clf, vectorizer, features_train, features_test, labels_train, labels_test) = my_func(words_file, authors_file)
+
+          top_features = [(number, feature, vectorizer.get_feature_names()[number]) for number, feature in 
+                          zip(range(len(clf.feature_importances_)), clf.feature_importances_) if feature > 0.2]
+          print top_features
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>[(14343, 0.66666666666666674, u'cgermannsf')]</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('feature_selection-exercise1', 'feature_selection')"><h3>Exercise 6: Accuracy of the Overfit Tree</h3></a>
+    <div ng-if="curr_view==='feature_selection-exercise6'">
+      <h4 class="h4-code">Accuracy of the Overfit Tree</h4>
+      <pre>
+        <code class="python">
+          # remove the 2 outlier words
+          sw = ["sara", "shackleton", "chris", "germani", "sshacklensf", "cgermannsf"]
+          sara_and_chris(sw)
+
+          # re-fit the tree
+          words_file = 'your_word_data.pkl'
+          authors_file = 'your_email_authors.pkl'
+          (clf, vectorizer, features_train, features_test, labels_train, labels_test) = my_func(words_file, authors_file)
+
+          print 'Accuracy on test set = {0}'.format(clf.score(features_test, labels_test))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Accuracy on test set = 0.816268486917
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#pca">Lesson 12: PCA</button>
+  <div id="pca" class="collapse">
+    <a href="" ng-click="click_view('pca-exercise1', 'pca')"><h3>Exercise 1: Explained Variance of Each PC</h3></a>
+    <div ng-if="curr_view==='pca-exercise1'">
+      <h4 class="h4-code">Explained Variance of Each PC</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/pca')
+        </code>
+      </pre>
+
+      <pre>
+        <code class="python">
+          %matplotlib inline
+
+          # code provided with the course
+          %run eigenfaces.py
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            ===================================================
+            Faces recognition example using eigenfaces and SVMs
+            ===================================================
+
+            The dataset used in this example is a preprocessed excerpt of the
+            "Labeled Faces in the Wild", aka LFW_:
+
+              http://vis-www.cs.umass.edu/lfw/lfw-funneled.tgz (233MB)
+
+              .. _LFW: http://vis-www.cs.umass.edu/lfw/
+
+              original source: http://scikit-learn.org/stable/auto_examples/applications/face_recognition.html
+
+
+            Total dataset size:
+            n_samples: 1288
+            n_features: 1850
+            n_classes: 7
+            Extracting the top 150 eigenfaces from 966 faces
+            done in 0.276s
+            Projecting the input data on the eigenfaces orthonormal basis
+            done in 0.035s
+            Fitting the classifier to the training set
+            done in 19.882s
+            Best estimator found by grid search:
+            SVC(C=1000.0, cache_size=200, class_weight='balanced', coef0=0.0,
+              decision_function_shape=None, degree=3, gamma=0.001, kernel='rbf',
+              max_iter=-1, probability=False, random_state=None, shrinking=True,
+              tol=0.001, verbose=False)
+            Predicting the people names on the testing set
+            done in 0.058s
+                               precision    recall  f1-score   support
+
+                 Ariel Sharon       0.50      0.62      0.55        13
+                 Colin Powell       0.76      0.88      0.82        60
+              Donald Rumsfeld       0.73      0.70      0.72        27
+                George W Bush       0.92      0.87      0.89       146
+            Gerhard Schroeder       0.77      0.80      0.78        25
+                  Hugo Chavez       0.75      0.60      0.67        15
+                   Tony Blair       0.88      0.83      0.86        36
+
+                  avg / total       0.83      0.83      0.83       322
+
+            [[  8   0   3   2   0   0   0]
+             [  2  53   1   3   0   1   0]
+             [  4   1  19   2   0   0   1]
+             [  1  11   2 127   3   1   1]
+             [  0   2   0   1  20   1   1]
+             [  0   2   0   1   2   9   1]
+             [  1   1   1   2   1   0  30]]
+
+             Predicted Images
+             <img src="/img/images/predicted_face_recog.png">
+
+             Eigen Faces
+             <img src="img//images/predicted_face_eigen_faces.png">
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('pca-exercise2', 'pca')"><h3>Exercise 2: F1 Score vs. No. of PCs Used</h3></a>
+    <div ng-if="curr_view==='pca-exercise2'">
+      <h4 class="h4-code">F1 Score vs. No. of PCs Used</h4>
+      <pre>
+        <code class="python">
+          for n_components in [10, 15, 25, 50, 100, 250]:
+          pca = RandomizedPCA(n_components=n_components, whiten=True).fit(X_train)
+
+          eigenfaces = pca.components_.reshape((n_components, h, w))
+
+          X_train_pca = pca.transform(X_train)
+          X_test_pca = pca.transform(X_test)
+
+
+          # Train a SVM classification model
+          param_grid = {
+                   'C': [1e3, 5e3, 1e4, 5e4, 1e5],
+                    'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1],
+                    }
+          clf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid)
+          clf = clf.fit(X_train_pca, y_train)
+
+
+          # Quantitative evaluation of the model quality on the test set
+          y_pred = clf.predict(X_test_pca)
+
+          if n_components==10:
+            print 'n_components' + classification_report(y_test, y_pred, target_names=target_names).split('\n')[0]
+
+          print '{0:12d}'.format(n_components) + classification_report(y_test, y_pred, target_names=target_names).split('\n')[2]
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            n_components                   precision    recall  f1-score   support
+                    10     Ariel Sharon       0.14      0.23      0.17        13
+                    15     Ariel Sharon       0.45      0.38      0.42        13
+                    25     Ariel Sharon       0.53      0.69      0.60        13
+                    50     Ariel Sharon       0.62      0.77      0.69        13
+                   100     Ariel Sharon       0.67      0.62      0.64        13
+                   250     Ariel Sharon       0.60      0.69      0.64        13
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#validation">Lesson 13: Validation</button>
+  <div id="validation" class="collapse">
+    <a href="" ng-click="click_view('validation-exercise1', 'validation')"><h3>Exercise 1: Train/Test Split in sklearn</h3></a>
+    <div ng-if="curr_view==='validation-exercise1'">
+      <h4 class="h4-code">Train/Test Split in sklearn</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/validation')
+        </code>
+      </pre>
+      <pre>
+        <code class="python">
+          from sklearn import datasets
+          from sklearn.svm import SVC
+          from sklearn import cross_validation
+
+          iris = datasets.load_iris()
+          features = iris.data
+          labels = iris.target
+
+          ### set the random_state to 0 and the test_size to 0.4 so
+          ### we can exactly check your result
+          features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(iris.data, iris.target, test_size=0.4, random_state=0)
+
+
+          clf = SVC(kernel="linear", C=1.)
+          clf.fit(features_train, labels_train)
+
+          print clf.score(features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.966666666667</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('validation-exercise2', 'validation')"><h3>Exercise 2: Your First (Overfit) POI Identifier</h3></a>
+    <div ng-if="curr_view==='validation-exercise2'">
+      <h4 class="h4-code">Your First (Overfit) POI Identifier</h4>
+      <pre>
+        <code class="python">
+          import pickle
+          from feature_format import featureFormat, targetFeatureSplit
+
+          data_dict = pickle.load(open("../final_project/final_project_dataset.pkl", "r") )
+
+          ### first element is our labels, any added elements are predictor
+          ### features. Keep this the same for the mini-project, but you'll
+          ### have a different feature list when you do the final project.
+          features_list = ["poi", "salary"]
+
+          data = featureFormat(data_dict, features_list)
+          labels, features = targetFeatureSplit(data)
+
+
+          ### it's all yours from here forward!  
+          from sklearn.tree import DecisionTreeClassifier
+
+          clf = DecisionTreeClassifier()
+          clf.fit(features,labels)
+
+          clf.score(features,labels)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.98947368421052628</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('validation-exercise3', 'validation')"><h3>Exercise 3: Deploying a Training/Testing Regime</h3></a>
+    <div ng-if="curr_view==='validation-exercise3'">
+      <h4 class="h4-code">Deploying a Training/Testing Regime</h4>
+      <pre>
+        <code class="python">
+          features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(features, labels, test_size=0.3, random_state=42)
+
+          clf.fit(features_train, labels_train)
+          clf.score(features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.72413793103448276</span>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#evaluation_metrices">Lesson 14: Evaluation Metrices</button>
+  <div id="evaluation_metrices" class="collapse">
+    <pre>
+        <code class="comment">
+          
+          Recall = P( predict A | truth is A )
+
+          Precision = P( truth is A | predict A )
+        </code>
+    </pre>
+
+    <a href="" ng-click="click_view('evaluation_metrices-exercise1', 'evaluation_metrices')"><h3>Exercise 1: Applying Metrics to Your POI Identifier</h3></a>
+    <div ng-if="curr_view==='evaluation_metrices-exercise1'">
+      <h4 class="h4-code">Applying Metrics to Your POI Identifier</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/evaluation')
+        </code>
+      </pre>
+
+      <pre>
+        <code class="python">
+          import pickle
+          from feature_format import featureFormat, targetFeatureSplit
+
+          data_dict = pickle.load(open("../final_project/final_project_dataset.pkl", "r") )
+
+          ### add more features to features_list!
+          features_list = ["poi", "salary"]
+
+          data = featureFormat(data_dict, features_list)
+          labels, features = targetFeatureSplit(data)
+
+          # decision tree code from the previous lesson
+          from sklearn.tree import DecisionTreeClassifier
+          from sklearn import cross_validation
+          from sklearn.metrics import confusion_matrix, precision_score, recall_score, classification_report
+
+          features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(features, labels, test_size=0.3, random_state=42)
+
+          clf = DecisionTreeClassifier()
+          clf.fit(features_train, labels_train)
+
+          pred = clf.predict(features_test)
+
+          print confusion_matrix(labels_test, pred)
+        </code>
+      </pre>
+      
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            [[21  4]
+            [ 4  0]]
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('evaluation_metrices-exercise2', 'evaluation_metrices')"><h3>Exercise 2: Unpacking Into Precision and Recall</h3></a>
+    <div ng-if="curr_view==='evaluation_metrices-exercise2'">
+      <h4 class="h4-code">Unpacking Into Precision and Recall</h4>
+      <pre>
+        <code class="python">
+          print precision_score(labels_test, pred)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.0</span>
+      </div>
+
+      <pre>
+        <code class="python">
+          print classification_report(labels_test, pred)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.0</span>
+         <pre class="comment">
+          <code>
+                       precision    recall  f1-score   support
+
+                  0.0       0.84      0.84      0.84        25
+                  1.0       0.00      0.00      0.00         4
+
+          avg / total       0.72      0.72      0.72        29
+
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('evaluation_metrices-exercise3', 'evaluation_metrices')"><h3>Exercise 3: Recall of Your POI Identifier</h3></a>
+    <div ng-if="curr_view==='evaluation_metrices-exercise3'">
+      <h4 class="h4-code">Recall of Your POI Identifier</h4>
+      <pre>
+        <code class="python">
+          print recall_score(labels_test, pred)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.0</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('evaluation_metrices-exercise4', 'evaluation_metrices')"><h3>Exercise 4: How Many True Positives?</h3></a>
+    <div ng-if="curr_view==='evaluation_metrices-exercise4'">
+      <h4 class="h4-code">How Many True Positives?</h4>
+      <pre>
+        <code class="python">
+          predictions = [0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1] 
+          true_labels = [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0]
+
+          cm = confusion_matrix(true_labels, predictions)
+
+          print cm, '\n'
+          print '{0} True positives'.format(cm[1][1])
+          print '{0} True negatives'.format(cm[0][0])
+          print '{0} False positives'.format(cm[0][1])
+          print '{0} False negatives'.format(cm[1][0])
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            [[9 3]
+             [2 6]] 
+
+            6 True positives
+            9 True negatives
+            3 False positives
+            2 False negatives
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('evaluation_metrices-exercise5', 'evaluation_metrices')"><h3>Exercise 5: Precision</h3></a>
+    <div ng-if="curr_view==='evaluation_metrices-exercise5'">
+      <h4 class="h4-code">Precision</h4>
+      <pre>
+        <code class="python">
+          print precision_score(true_labels, predictions)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.666666666667</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('evaluation_metrices-exercise6', 'evaluation_metrices')"><h3>Exercise 6: Recall</h3></a>
+    <div ng-if="curr_view==='evaluation_metrices-exercise6'">
+      <h4 class="h4-code">Recall</h4>
+      <pre>
+        <code class="python">
+          print recall_score(true_labels, predictions)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.75</span>
+      </div>
+    </div>
+
+  </div>
   <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 15: Final Project</button>
   <div id="final_project" class="collapse"></div>
 </div>
