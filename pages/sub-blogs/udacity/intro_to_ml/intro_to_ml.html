@@ -825,20 +825,835 @@
       <div class="code-output">
         <span class='output-title'><b>Output:</b> </span><span>0.967007963595</span>
       </div>
+    </div>    
+  </div>
+
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#own_algo">Lesson 4: Choose Your Own Algorithm</button>
+  <div id="own_algo" class="collapse">
+    <br>
+    <a href="" ng-click="click_view('own_algo-exercise1', 'own_algo')"><h3>Exercise 1: Choose Your Own Algorithm</h3></a>
+    <div ng-if="curr_view==='own_algo-exercise1'">
+      <h4 class="h4-code">Choose Your Own Algorithm</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+
+
+          import matplotlib.pyplot as plt
+          from prep_terrain_data import makeTerrainData
+          from class_vis import prettyPicture
+
+          features_train, labels_train, features_test, labels_test = makeTerrainData()
+
+
+          ### the training data (features_train, labels_train) have both "fast" and "slow"
+          ### points mixed together--separate them so we can give them different colors
+          ### in the scatterplot and identify them visually
+          grade_fast = [features_train[ii][0] for ii in range(0, len(features_train)) if labels_train[ii]==0]
+          bumpy_fast = [features_train[ii][1] for ii in range(0, len(features_train)) if labels_train[ii]==0]
+          grade_slow = [features_train[ii][0] for ii in range(0, len(features_train)) if labels_train[ii]==1]
+          bumpy_slow = [features_train[ii][1] for ii in range(0, len(features_train)) if labels_train[ii]==1]
+
+
+          #### initial visualization
+          %matplotlib inline
+          plt.xlim(0.0, 1.0)
+          plt.ylim(0.0, 1.0)
+          plt.scatter(bumpy_fast, grade_fast, color = "b", label="fast")
+          plt.scatter(grade_slow, bumpy_slow, color = "r", label="slow")
+          plt.legend()
+          plt.xlabel("bumpiness")
+          plt.ylabel("grade")
+          plt.show()
+          ################################################################################
+
+
+          ### your code here!  name your classifier object clf if you want the 
+          ### visualization code (prettyPicture) to show you the decision boundary
+
+          # import the classifiers
+          from sklearn.neighbors import KNeighborsClassifier
+          from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+          from sklearn.tree import DecisionTreeClassifier
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="/img/images/choosing_own_algo.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('own_algo-exercise2', 'own_algo')"><h3>Exercise 2: kNN</h3></a>
+    <div ng-if="curr_view==='own_algo-exercise2'">
+      <h4 class="h4-code">kNN</h4>
+      <pre>
+        <code class="python">
+          clf = KNeighborsClassifier(n_neighbors=1)
+          clf.fit(features_train, labels_train)
+
+          # print the accuracy and display the decision boundary
+          print 'Accuracy = {0}'.format(clf.score(features_test, labels_test))
+          prettyPicture(clf, features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="/img/images/choosing_own_algo_knn.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('own_algo-exercise3', 'own_algo')"><h3>Exercise 3: Random Forest</h3></a>
+    <div ng-if="curr_view==='own_algo-exercise3'">
+      <h4 class="h4-code">Random Forest</h4>
+      <pre>
+        <code class="python">
+          clf = RandomForestClassifier(n_estimators=100)
+          clf = clf.fit(features_train, labels_train)
+
+          # print the accuracy and display the decision boundary
+          print 'Accuracy = {0}'.format(clf.score(features_test, labels_test))
+          prettyPicture(clf, features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="/img/images/choosing_own_algo_rf.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('own_algo-exercise4', 'own_algo')"><h3>Exercise 4: AdaBoost</h3></a>
+    <div ng-if="curr_view==='own_algo-exercise4'">
+      <h4 class="h4-code">AdaBoost</h4>
+      <pre>
+        <code class="python">
+          clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=1), n_estimators=200)
+          clf = clf.fit(features_train, labels_train)
+
+          # print the accuracy and display the decision boundary
+          print 'Accuracy = {0}'.format(clf.score(features_test, labels_test))
+          prettyPicture(clf, features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="/img/images/choosing_own_algo_adaboost.png"></span>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#dataset">Lesson 5: Datasets and Question</button>
+  <div id="dataset" class="collapse">
+    <a href="" ng-click="click_view('dataset-exercise1', 'dataset')"><h3>Exercise 1: Size of the Enron Dataset</h3></a>
+    <div ng-if="curr_view==='dataset-exercise1'">
+      <h4 class="h4-code">Size of the Enron Dataset</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import pickle
+
+          enron_data = pickle.load(open("../final_project/final_project_dataset.pkl", "r"))
+          print 'Number of people in the Enron dataset: {0}'.format(len(enron_data))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Number of people in the Enron dataset: 146
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('dataset-exercise2', 'dataset')"><h3>Exercise 2: Features in the Enron Dataset</h3></a>
+    <div ng-if="curr_view==='dataset-exercise2'">
+      <h4 class="h4-code">Features in the Enron Dataset</h4>
+      <pre>
+        <code class="python">
+          print 'Number of features for each person in the Enron dataset: {0}'.format(len(enron_data.values()[0]))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Number of features for each person in the Enron dataset: 21
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('dataset-exercise3', 'dataset')"><h3>Exercise 3: Finding POI's in the Enron Data</h3></a>
+    <div ng-if="curr_view==='dataset-exercise3'">
+      <h4 class="h4-code">Finding POI's in the Enron Data</h4>
+      <pre>
+        <code class="python">
+          pois = [x for x, y in enron_data.items() if y['poi']]
+          print 'Number of POI\'s: {0}'.format(len(pois))
+          #enron_data.items()[0]
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Number of POI's: 18
+          </code>
+        </pre>
+      </div>
     </div>
 
 
+    <a href="" ng-click="click_view('dataset-exercise4', 'dataset')"><h3>Exercise 4: Query the Dataset 1</h3></a>
+    <div ng-if="curr_view==='dataset-exercise4'">
+      <h4 class="h4-code">Query the Dataset 1</h4>
+      <pre>
+        <code class="python">
+          # DELETE ME
+          enron_data['PRENTICE JAMES']
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>{
+             'bonus': 'NaN',
+             'deferral_payments': 564348,
+             'deferred_income': 'NaN',
+             'director_fees': 'NaN',
+             'email_address': 'james.prentice@enron.com',
+             'exercised_stock_options': 886231,
+             'expenses': 'NaN',
+             'from_messages': 'NaN',
+             'from_poi_to_this_person': 'NaN',
+             'from_this_person_to_poi': 'NaN',
+             'loan_advances': 'NaN',
+             'long_term_incentive': 'NaN',
+             'other': 'NaN',
+             'poi': False,
+             'restricted_stock': 208809,
+             'restricted_stock_deferred': 'NaN',
+             'salary': 'NaN',
+             'shared_receipt_with_poi': 'NaN',
+             'to_messages': 'NaN',
+             'total_payments': 564348,
+             'total_stock_value': 1095040
+            }
+          </code>
+        </pre>
+      </div>
+      <pre>
+        <code class="python">
+          enron_data['PRENTICE JAMES']['total_stock_value']
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>1095040</span>
+      </div>
+    </div>
 
-    
+    <a href="" ng-click="click_view('dataset-exercise5', 'dataset')"><h3>Exercise 5: Query the Dataset 2</h3></a>
+    <div ng-if="curr_view==='dataset-exercise5'">
+      <h4 class="h4-code">Query the Dataset 2</h4>
+      <pre>
+        <code class="python">
+          enron_data['COLWELL WESLEY']['from_this_person_to_poi']
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>11</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('dataset-exercise6', 'dataset')"><h3>Exercise 6: Query the Dataset 3</h3></a>
+    <div ng-if="curr_view==='dataset-exercise6'">
+      <h4 class="h4-code">Query the Dataset 3</h4>
+      <pre>
+        <code class="python">
+          enron_data['SKILLING JEFFREY K']['exercised_stock_options']
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>19250000</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('dataset-exercise7', 'dataset')"><h3>Exercise 7: Follow the Money</h3></a>
+    <div ng-if="curr_view==='dataset-exercise7'">
+      <h4 class="h4-code">Follow the Money</h4>
+      <pre>
+        <code class="python">
+          names = ['SKILLING JEFFREY K', 'FASTOW ANDREW S', 'LAY KENNETH L']
+          names_payments = {name:enron_data[name]['total_payments'] for name in names}
+          print sorted(names_payments.items(), key=lambda x: x[1], reverse=True)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            [('LAY KENNETH L', 103559793), ('SKILLING JEFFREY K', 8682716), ('FASTOW ANDREW S', 2424083)]
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('dataset-exercise8', 'dataset')"><h3>Exercise 8: Dealing with Unfilled Features</h3></a>
+    <div ng-if="curr_view==='dataset-exercise8'">
+      <h4 class="h4-code">Dealing with Unfilled Features</h4>
+      <pre>
+        <code class="python">
+          import pandas as pd
+
+          df = pd.DataFrame(enron_data)
+          print 'Has salary data: {0}'.format(sum(df.loc['salary',:] != 'NaN'))
+          print 'Has email: {0}'.format(sum(df.loc['email_address',:] != 'NaN'))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            Has salary data: 95
+            Has email: 111
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('dataset-exercise9', 'dataset')"><h3>Exercise 9: Missing POI's 1</h3></a>
+    <div ng-if="curr_view==='dataset-exercise9'">
+      <h4 class="h4-code">Missing POI's 1</h4>
+      <pre>
+        <code class="python">
+          # How many people in the E+F dataset (as it currently exists) have “NaN” for their total payments? 
+          # What percentage of people in the dataset as a whole is this?
+
+          isnan = sum(df.loc['total_payments',:]=='NaN')
+          _,cols = df.shape
+          print 'total_payments == \'NaN\': {0} people = {1:.2f}%'.format(isnan, 100.*isnan/cols)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            total_payments == 'NaN': 21 people = 14.38%
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('dataset-exercise10', 'dataset')"><h3>Exercise 10: Missing POI's 2</h3></a>
+    <div ng-if="curr_view==='dataset-exercise10'">
+      <h4 class="h4-code">Missing POI's 2</h4>
+      <pre>
+        <code class="python">
+          isnan = sum(df.loc['total_payments',pois]=='NaN')
+          print 'POI total_payments == \'NaN\': {0} people = {1:.2f}%'.format(isnan, 100.*isnan/len(pois))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            POI total_payments == 'NaN': 0 people = 0.00%
+          </code>
+        </pre>
+      </div>
+    </div>
+
   </div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 4: Choose Your Own Algorithm</button>
-  <div id="own_algo" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 5: Datasets and Question</button>
-  <div id="dataset" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 6: Regressions</button>
-  <div id="regression" class="collapse"></div>
-  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 7: Outliers</button>
-  <div id="outliers" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#regression">Lesson 6: Regressions</button>
+  <div id="regression" class="collapse">
+    <a href="" ng-click="click_view('regression-exercise1', 'regression')"><h3>Exercise 1: Age/Net Worth Regression in sklearn</h3></a>
+    <div ng-if="curr_view==='regression-exercise1'">
+      <h4 class="h4-code">Age/Net Worth Regression in sklearn</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/regression')
+
+
+          import numpy
+          import matplotlib
+          matplotlib.use('agg')
+
+          import matplotlib.pyplot as plt
+          from class_vis import prettyPicture, output_image
+
+          from ages_net_worths import ageNetWorthData
+
+          ages_train, ages_test, net_worths_train, net_worths_test = ageNetWorthData()
+
+
+          from sklearn import linear_model
+
+          def studentReg(ages_train, net_worths_train):
+              reg = linear_model.LinearRegression()
+              reg.fit(ages_train, net_worths_train)
+              return reg
+
+
+          reg = studentReg(ages_train, net_worths_train)
+
+          %matplotlib inline
+          plt.clf()
+          plt.scatter(ages_train, net_worths_train, color="b", label="train data")
+          plt.scatter(ages_test, net_worths_test, color="r", label="test data")
+          plt.plot(ages_test, reg.predict(ages_test), color="black")
+          plt.legend(loc=2)
+          plt.xlabel("ages")
+          plt.ylabel("net worths")
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/regression.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('regression-exercise2', 'regression')"><h3>Exercise 2: Now You Practice Extracting Information</h3></a>
+    <div ng-if="curr_view==='regression-exercise2'">
+      <h4 class="h4-code">Now You Practice Extracting Information</h4>
+      <pre>
+        <code class="python">
+          reg = linear_model.LinearRegression()
+          reg.fit(ages_train, net_worths_train)
+
+          ### get Katie's net worth (she's 27)
+          ### sklearn predictions are returned in an array, so you'll want to index into
+          ### the output to get what you want, e.g. net_worth = predict([[27]])[0][0] (not
+          ### exact syntax, the point is the [0] at the end). In addition, make sure the
+          ### argument to your prediction function is in the expected format - if you get
+          ### a warning about needing a 2d array for your data, a list of lists will be
+          ### interpreted by sklearn as such (e.g. [[27]]).
+          km_net_worth = reg.predict([[27]])[0][0]
+
+          ### get the slope
+          ### again, you'll get a 2-D array, so stick the [0][0] at the end
+          slope = reg.coef_[0][0]
+
+          ### get the intercept
+          ### here you get a 1-D array, so stick [0] on the end to access
+          ### the info we want
+          intercept = reg.intercept_[0]
+
+
+          ### get the score on test data
+          test_score = reg.score(ages_test, net_worths_test)
+
+
+          ### get the score on the training data
+          training_score = reg.score(ages_train, net_worths_train)
+        </code>
+      </pre>
+    </div>
+
+    <a href="" ng-click="click_view('regression-exercise3', 'regression')"><h3>Exercise 3: Bonus Target and Features</h3></a>
+    <div ng-if="curr_view==='regression-exercise3'">
+      <h4 class="h4-code">Bonus Target and Features</h4>
+      <pre>
+        <code class="python">
+          import pickle
+          from feature_format import featureFormat, targetFeatureSplit
+
+          dictionary = pickle.load( open("../final_project/final_project_dataset_modified.pkl", "r") )
+
+          def finance_regression(dictionary, features_list, fit_test=False):
+              data = featureFormat( dictionary, features_list, remove_any_zeroes=True)
+              target, features = targetFeatureSplit( data )
+
+              ### training-testing split needed in regression, just like classification
+              from sklearn.cross_validation import train_test_split
+              feature_train, feature_test, target_train, target_test = train_test_split(features, target, test_size=0.5, random_state=42)
+              train_color = "b"
+              test_color = "r"
+
+
+              reg = linear_model.LinearRegression()
+              reg.fit(feature_train, target_train)
+
+
+              ### draw the scatterplot, with color-coded training and testing points
+              import matplotlib.pyplot as plt
+              for feature, target in zip(feature_test, target_test):
+                  plt.scatter( feature, target, color=test_color ) 
+              for feature, target in zip(feature_train, target_train):
+                  plt.scatter( feature, target, color=train_color ) 
+
+              ### labels for the legend
+              plt.scatter(feature_test[0], target_test[0], color=test_color, label="test")
+              plt.scatter(feature_test[0], target_test[0], color=train_color, label="train")
+
+
+              # draw the regression line, once it's coded
+              plt.plot( feature_test, reg.predict(feature_test) )
+              plt.xlabel(features_list[1])
+              plt.ylabel(features_list[0])
+              plt.legend()
+              
+              if fit_test:
+                  reg.fit(feature_test, target_test)
+                  plt.plot(feature_train, reg.predict(feature_train), color="r") 
+              
+              return (reg, feature_train, target_train, feature_test, target_test)
+
+
+          (reg, feature_train, target_train, feature_test, target_test) = finance_regression(dictionary, ["bonus", "salary"])
+          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="/img/images/regression_bonus_target.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('regression-exercise4', 'regression')"><h3>Exercise 4: Extracting Slope and Intercept</h3></a>
+    <div ng-if="curr_view==='regression-exercise4'">
+      <h4 class="h4-code">Extracting Slope and Intercept</h4>
+      <pre>
+        <code class="python">
+          print 'slope = {0}'.format(reg.coef_[0])
+          print 'intercept = {0}'.format(reg.intercept_)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            slope = 5.44814028881
+            intercept = -102360.543294
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('regression-exercise5', 'regression')"><h3>Exercise 5: Regression Score: Training Data</h3></a>
+    <div ng-if="curr_view==='regression-exercise5'">
+      <h4 class="h4-code">Regression Score: Training Data</h4>
+      <pre>
+        <code class="python">
+          print 'score on training set = {0}'.format(reg.score(feature_train, target_train))          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            score on training set = 0.0455091926995            
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('regression-exercise6', 'regression')"><h3>Exercise 6: Regression Score: Test Data</h3></a>
+    <div ng-if="curr_view==='regression-exercise6'">
+      <h4 class="h4-code">Regression Score: Test Data</h4>
+      <pre>
+        <code class="python">
+          print 'score on test set = {0}'.format(reg.score(feature_test, target_test))          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            score on test set = -1.48499241737            
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('regression-exercise7', 'regression')"><h3>Exercise 7: Regressing Bonus Against LTI</h3></a>
+    <div ng-if="curr_view==='regression-exercise7'">
+      <h4 class="h4-code">Regressing Bonus Against LTI</h4>
+      <pre>
+        <code class="python">
+          (reg, feature_train, target_train, feature_test, target_test) = finance_regression(dictionary, ['bonus', 'long_term_incentive'])          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/regression_bonus_against_lti.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('regression-exercise8', 'regression')"><h3>Exercise 8: Sneak Peek: Outliers Break Regressions</h3></a>
+    <div ng-if="curr_view==='regression-exercise8'">
+      <h4 class="h4-code">Sneak Peek: Outliers Break Regressions</h4>
+      <pre>
+        <code class="python">
+          (reg, feature_train, target_train, feature_test, target_test) = finance_regression(dictionary, ["bonus", "salary"], fit_test=True)
+          print 'slope = {0}'.format(reg.coef_[0])
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="/img/images/regression_bonus_slope.png"></span>
+        <pre class="comment">
+          <code>
+            slope = 2.27410114127
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#outliers">Lesson 7: Outliers</button>
+  <div id="outliers" class="collapse">
+    <a href="" ng-click="click_view('outliers-exercise1', 'outliers')"><h3>Exercise 1: Slope of Regression with Outliers</h3></a>
+    <div ng-if="curr_view==='outliers-exercise1'">
+      <h4 class="h4-code">Slope of Regression with Outliers</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/datasets_questions')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/outliers')
+
+          import random
+          import numpy
+          import matplotlib.pyplot as plt
+          import pickle
+
+          from outlier_cleaner import outlierCleaner
+
+
+          ### load up some practice data with outliers in it
+          ages = pickle.load( open("practice_outliers_ages.pkl", "r") )
+          net_worths = pickle.load( open("practice_outliers_net_worths.pkl", "r") )
+
+          ### ages and net_worths need to be reshaped into 2D numpy arrays
+          ### second argument of reshape command is a tuple of integers: (n_rows, n_columns)
+          ### by convention, n_rows is the number of data points
+          ### and n_columns is the number of features
+          ages       = numpy.reshape( numpy.array(ages), (len(ages), 1))
+          net_worths = numpy.reshape( numpy.array(net_worths), (len(net_worths), 1))
+          from sklearn.cross_validation import train_test_split
+          ages_train, ages_test, net_worths_train, net_worths_test = train_test_split(ages, net_worths, test_size=0.1, random_state=42)
+
+
+          # fit a linear regression
+          from sklearn import linear_model
+
+          reg = linear_model.LinearRegression()
+          reg.fit(ages_train, net_worths_train)
+
+          print 'slope = {0}'.format(reg.coef_[0][0])
+
+
+          %matplotlib inline
+          plt.plot(ages, reg.predict(ages), color="blue")
+          plt.scatter(ages, net_worths)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/outliers_slope.png"></span>
+        <pre class="comment">
+          <code>
+            slope = 5.07793064344
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('outliers-exercise1', 'outliers')"><h3>Exercise 2: Score of Regression with Outliers</h3></a>
+    <div ng-if="curr_view==='outliers-exercise2'">
+      <h4 class="h4-code">Score of Regression with Outliers</h4>
+      <pre>
+        <code class="python">
+          print 'score = {0}'.format(reg.score(ages_test, net_worths_test))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            score = 0.878262478835
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('outliers-exercise1', 'outliers')"><h3>Exercise 3: Slope After Cleaning</h3></a>
+    <div ng-if="curr_view==='outliers-exercise3'">
+      <h4 class="h4-code">Slope After Cleaning</h4>
+      <pre>
+        <code class="python">
+          def outlierCleaner(predictions, ages, net_worths):
+              """
+                  Clean away the 10% of points that have the largest
+                  residual errors (difference between the prediction
+                  and the actual net worth).
+
+                  Return a list of tuples named cleaned_data where 
+                  each tuple is of the form (age, net_worth, error).
+              """
+              errors = net_worths-predictions
+              threshold = numpy.percentile(numpy.absolute(errors), 90)
+              #print threshold
+              #print numpy.max(numpy.absolute(errors))
+              #print numpy.sort(numpy.absolute(errors), axis=0)
+              
+              cleaned_data = [(age, net_worth, error) for age, net_worth, error in zip(ages, net_worths, errors) if abs(error) <= threshold]
+              
+              return cleaned_data
+
+          reg = linear_model.LinearRegression()
+          reg.fit(ages_train, net_worths_train)
+
+          plt.plot(ages, reg.predict(ages), color='blue')
+
+          # plot all points in blue
+          plt.scatter(ages, net_worths, color='blue')
+
+          # plot the current training points in orange
+          plt.scatter(ages_train, net_worths_train, color='orange')
+
+          ### identify and remove the most outlier-y points
+          predictions = reg.predict(ages_train)
+          cleaned_data = outlierCleaner( predictions, ages_train, net_worths_train )
+
+
+          ### only run this code if cleaned_data is returning data
+          if len(cleaned_data) > 0:
+              # the non-outlier ages, net worths, and errors
+              ages_train2, net_worths_train2, errors_train2 = zip(*cleaned_data)
+              ages_train2       = numpy.reshape( numpy.array(ages_train2), (len(ages_train2), 1))
+              net_worths_train2 = numpy.reshape( numpy.array(net_worths_train2), (len(net_worths_train2), 1))
+
+              # refit the cleaned data
+              reg2 = linear_model.LinearRegression()
+              reg2.fit(ages_train2, net_worths_train2)
+              plt.plot(ages, reg2.predict(ages), color='red')
+              plt.scatter(ages_train2, net_worths_train2, color='red')
+              plt.xlabel("ages")
+              plt.ylabel("net worths")
+
+          else:
+              print "outlierCleaner() is returning an empty list, no refitting to be done"
+              
+              
+          print 'new slope = {0}'.format(reg2.coef_[0][0])
+
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/slope_after_cleaning.png"></span>
+        <pre class="comment">
+          <code>
+            new slope = 6.36859480694
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('outliers-exercise1', 'outliers')"><h3>Exercise 4: Score After Cleaning</h3></a>
+    <div ng-if="curr_view==='outliers-exercise4'">
+      <h4 class="h4-code">Score After Cleaning</h4>
+      <pre>
+        <code class="python">
+          print 'new score = {0}'.format(reg2.score(ages_test, net_worths_test))
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            new score = 0.983189455686
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('outliers-exercise1', 'outliers')"><h3>Exercise 5: Enron Outliers</h3></a>
+    <div ng-if="curr_view==='outliers-exercise5'">
+      <h4 class="h4-code">Enron Outliers</h4>
+      <pre>
+        <code class="python">
+          from feature_format import featureFormat, targetFeatureSplit
+
+          ### read in data dictionary, convert to numpy array
+          data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r") )
+          features = ["salary", "bonus"]
+          data = featureFormat(data_dict, features)
+
+          plt.scatter(data[:,0], data[:,1])
+          plt.xlabel("salary")
+          plt.ylabel("bonus")
+
+          import pandas as pd
+          df = pd.DataFrame(data_dict)
+          df.loc['salary',:] = pd.to_numeric(df.loc['salary',:], errors='coerce')
+          df.loc['bonus',:] = pd.to_numeric(df.loc['bonus',:], errors='coerce')
+
+          print df.loc['salary',:].idxmax(axis=1)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/enron_outliers.png"></span>
+        <pre class="comment">
+          <code>
+            Outlier name: TOTAL
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('outliers-exercise1', 'outliers')"><h3>Exercise 6: Any More Outliers?</h3></a>
+    <div ng-if="curr_view==='outliers-exercise6'">
+      <h4 class="h4-code">Any More Outliers?</h4>
+      <pre>
+        <code class="python">
+          data_dict.pop('TOTAL', 0)
+
+          data = featureFormat(data_dict, features)
+
+          plt.scatter(data[:,0], data[:,1])
+          plt.xlabel("salary")
+          plt.ylabel("bonus")
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="img/images/any_more_outlier.png"></span>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('outliers-exercise1', 'outliers')"><h3>Exercise 7: Identifying Two More Outliers</h3></a>
+    <div ng-if="curr_view==='outliers-exercise7'">
+      <h4 class="h4-code">Identifying Two More Outliers</h4>
+      <pre>
+        <code class="python">
+          #print df.columns[name wdf.loc['salary',:] > 1*10**6 and df.loc['bonus',:] > 5*10**6]
+          print [name for name in df.columns if df.loc['salary', name] > 10**6 and df.loc['bonus',name] > 5*10**6]
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            ['LAY KENNETH L', 'SKILLING JEFFREY K', 'TOTAL']
+          </code>
+        </pre>
+      </div>
+    </div>
+
+  </div>
   <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 8: Clustering</button>
   <div id="clustering" class="collapse"></div>
   <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 9: Feature Scaling</button>

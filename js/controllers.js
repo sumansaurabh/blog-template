@@ -26,7 +26,7 @@ function UdacityProjectCtrl($scope, $rootScope, $http, $route) {
 	$scope.curr_view = '';
 
 	var project_map = {
-		"intro_to_ml": "Into to Machine Learning"
+		"intro_to_ml": "Intro to Machine Learning"
 	}
 
 	$scope.click_view = function (view_type, location_id) {
