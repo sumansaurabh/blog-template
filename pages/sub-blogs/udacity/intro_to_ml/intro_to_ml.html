@@ -1,0 +1,877 @@
+<div class="container">
+  
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 1: Naive Bayes</button>
+  <div id="naive_bayes" class="collapse">
+    <br>
+    <a href="" ng-click="click_view('nb-exercise1', 'naive_bayes')"><h3>Exercise 1: GaussianNB Deployment on Terrain Data</h3></a>
+    <div ng-if="curr_view==='nb-exercise1'">
+      <h4 class="h4-code"> class_vis.py</h4>
+      <pre>
+        <code class="python">
+          #!/usr/bin/python
+
+          #from udacityplots import *
+          import matplotlib 
+          matplotlib.use('agg')
+
+          import matplotlib.pyplot as plt
+          import pylab as pl
+          import numpy as np
+
+          import base64
+          import json
+          import subprocess
+
+          def prettyPicture(clf, X_test, y_test):
+              x_min = 0.0; x_max = 1.0
+              y_min = 0.0; y_max = 1.0
+
+              # Plot the decision boundary. For that, we will assign a color to each
+              # point in the mesh [x_min, m_max]x[y_min, y_max].
+              h = .01  # step size in the mesh
+              xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+              Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+
+              # Put the result into a color plot
+              #matplotlib inline
+              Z = Z.reshape(xx.shape)
+              plt.xlim(xx.min(), xx.max())
+              plt.ylim(yy.min(), yy.max())
+
+              plt.pcolormesh(xx, yy, Z, cmap=pl.cm.seismic)
+
+              # Plot also the test points
+              grade_sig = [X_test[ii][0] for ii in range(0, len(X_test)) if y_test[ii]==0]
+              bumpy_sig = [X_test[ii][1] for ii in range(0, len(X_test)) if y_test[ii]==0]
+              grade_bkg = [X_test[ii][0] for ii in range(0, len(X_test)) if y_test[ii]==1]
+              bumpy_bkg = [X_test[ii][1] for ii in range(0, len(X_test)) if y_test[ii]==1]
+
+              plt.scatter(grade_sig, bumpy_sig, color = "b", label="fast")
+              plt.scatter(grade_bkg, bumpy_bkg, color = "r", label="slow")
+              plt.legend()
+              plt.xlabel("bumpiness")
+              plt.ylabel("grade")
+
+              #plt.savefig("test.png")
+              
+          def output_image(name, format, bytes):
+              image_start = "BEGIN_IMAGE_f9825uweof8jw9fj4r8"
+              image_end = "END_IMAGE_0238jfw08fjsiufhw8frs"
+              data = {}
+              data['name'] = name
+              data['format'] = format
+              data['bytes'] = base64.encodestring(bytes)
+              print image_start+json.dumps(data)+image_end
+        </code>
+      </pre>
+      <h4 class="h4-code">prep_terrain_data.py</h4>
+      <pre>
+        <code class="python">
+          #!/usr/bin/python
+          import random
+
+
+          def makeTerrainData(n_points=1000):
+          ### make the toy dataset
+              random.seed(42)
+              grade = [random.random() for ii in range(0,n_points)]
+              bumpy = [random.random() for ii in range(0,n_points)]
+              error = [random.random() for ii in range(0,n_points)]
+              y = [round(grade[ii]*bumpy[ii]+0.3+0.1*error[ii]) for ii in range(0,n_points)]
+              for ii in range(0, len(y)):
+                  if grade[ii]>0.8 or bumpy[ii]>0.8:
+                      y[ii] = 1.0
+
+          ### split into train/test sets
+              X = [[gg, ss] for gg, ss in zip(grade, bumpy)]
+              split = int(0.75*n_points)
+              X_train = X[0:split]
+              X_test  = X[split:]
+              y_train = y[0:split]
+              y_test  = y[split:]
+
+              grade_sig = [X_train[ii][0] for ii in range(0, len(X_train)) if y_train[ii]==0]
+              bumpy_sig = [X_train[ii][1] for ii in range(0, len(X_train)) if y_train[ii]==0]
+              grade_bkg = [X_train[ii][0] for ii in range(0, len(X_train)) if y_train[ii]==1]
+              bumpy_bkg = [X_train[ii][1] for ii in range(0, len(X_train)) if y_train[ii]==1]
+
+          #    training_data = {"fast":{"grade":grade_sig, "bumpiness":bumpy_sig}
+          #            , "slow":{"grade":grade_bkg, "bumpiness":bumpy_bkg}}
+
+
+              grade_sig = [X_test[ii][0] for ii in range(0, len(X_test)) if y_test[ii]==0]
+              bumpy_sig = [X_test[ii][1] for ii in range(0, len(X_test)) if y_test[ii]==0]
+              grade_bkg = [X_test[ii][0] for ii in range(0, len(X_test)) if y_test[ii]==1]
+              bumpy_bkg = [X_test[ii][1] for ii in range(0, len(X_test)) if y_test[ii]==1]
+
+              test_data = {"fast":{"grade":grade_sig, "bumpiness":bumpy_sig}
+                      , "slow":{"grade":grade_bkg, "bumpiness":bumpy_bkg}}
+
+              return X_train, y_train, X_test, y_test
+          #    return training_data, test_data
+        </code>
+      </pre>
+      <h4 class="h4-code">ClassifyNB.py</h4>
+      <pre>
+        <code class="python">
+          def classify(features_train, labels_train):   
+          ### import the sklearn module for GaussianNB
+          ### create classifier
+          ### fit the classifier on the training features and labels
+          ### return the fit classifier
+          
+              
+          ### your code goes here!
+          from sklearn.naive_bayes import GaussianNB
+          clf = GaussianNB()
+          clf.fit(features_train, labels_train)
+          return clf
+        </code>
+      </pre>
+      <h4 class="h4-code">studentMain.py</h4>
+      <pre>
+        <code class="python">
+          #!/usr/bin/python
+
+          """ Complete the code in ClassifyNB.py with the sklearn
+              Naive Bayes classifier to classify the terrain data.
+              
+              The objective of this exercise is to recreate the decision 
+              boundary found in the lesson video, and make a plot that
+              visually shows the decision boundary """
+
+
+          features_train, labels_train, features_test, labels_test = makeTerrainData()
+
+          ### the training data (features_train, labels_train) have both "fast" and "slow" points mixed
+          ### in together--separate them so we can give them different colors in the scatterplot,
+          ### and visually identify them
+          grade_fast = [features_train[ii][0] for ii in range(0, len(features_train)) if labels_train[ii]==0]
+          bumpy_fast = [features_train[ii][1] for ii in range(0, len(features_train)) if labels_train[ii]==0]
+          grade_slow = [features_train[ii][0] for ii in range(0, len(features_train)) if labels_train[ii]==1]
+          bumpy_slow = [features_train[ii][1] for ii in range(0, len(features_train)) if labels_train[ii]==1]
+
+          clf = classify(features_train, labels_train)
+
+          ### draw the decision boundary with the text points overlaid
+          prettyPicture(clf, features_test, labels_test)
+          #output_image("test.png", "png", open("test.png", "rb").read())
+        </code>
+      </pre>
+      <h3 class="h4-code">Output</h3>
+      <img src="/img/images/GaussianNB.png">
+    </div>
+    <a href="" ng-click="click_view('nb-exercise2', 'naive_bayes')"><h3>Exercise 2: Calculating NB Accuracy</h3></a>
+    <div ng-if="curr_view==='nb-exercise2'">
+      <h4 class="h4-code">classify.py</h4>
+      <pre>
+        <code class="python">
+          def NBAccuracy(features_train, labels_train, features_test, labels_test):
+            """ compute the accuracy of your Naive Bayes classifier """
+            ### import the sklearn module for GaussianNB
+            from sklearn.naive_bayes import GaussianNB
+            from sklearn.metrics import accuracy_score
+
+            ### create classifier
+            clf = GaussianNB()
+
+            ### fit the classifier on the training features and labels
+            clf.fit(features_train, labels_train)
+
+            ### use the trained classifier to predict labels for the test features
+            # method 1
+            accuracy = clf.score(features_test, labels_test)
+            
+            # method 2
+            pred = clf.predict(features_test)
+            accuracy = accuracy_score(pred, labels_test)
+            
+            return accuracy
+        </code>
+      </pre>
+      <h4 class="h4-code">studentCode.py</h4>
+      <pre>
+        <code class="python">
+          features_train, labels_train, features_test, labels_test = makeTerrainData()
+
+          def submitAccuracy():
+              accuracy = NBAccuracy(features_train, labels_train, features_test, labels_test)
+              return accuracy
+
+          print submitAccuracy()
+        </code>
+      </pre>
+      <h4 class="h4-code">Output</h4>
+      <p>Output -: 0.884</p>
+    </div>
+    <a href="" ng-click="click_view('nb-exercise3', 'author_id_accuracy')"><h3>Exercise 3: Author ID Accuracy</h3></a>
+    <div ng-if="curr_view==='nb-exercise3'">
+      <h4 class="h4-code">nb_author_id.py</h4>
+      <pre>
+        <code class="python">
+          #!/usr/bin/python
+
+          """ 
+              This is the code to accompany the Lesson 1 (Naive Bayes) mini-project. 
+
+              Use a Naive Bayes Classifier to identify emails by their authors
+              
+              authors and labels:
+              Sara has label 0
+              Chris has label 1
+          """
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/naive_bayes')
+
+          import sys
+          from time import time
+
+          sys.path.append("../tools/")
+          from email_preprocess import preprocess
+
+
+          ### features_train and features_test are the features for the training
+          ### and testing datasets, respectively
+          ### labels_train and labels_test are the corresponding item labels
+          features_train, features_test, labels_train, labels_test = preprocess()
+
+
+
+
+          #########################################################
+          ### your code goes here ###
+          from sklearn.naive_bayes import GaussianNB
+          from sklearn.metrics import accuracy_score
+
+          # the classifier
+          clf = GaussianNB()
+
+          # train
+          t0 = time()
+          clf.fit(features_train, labels_train)
+          print "\ntraining time:", round(time()-t0, 3), "s"
+
+          # predict
+          t0 = time()
+          pred = clf.predict(features_test)
+          print "predicting time:", round(time()-t0, 3), "s"
+
+          accuracy = accuracy_score(pred, labels_test)
+
+          print '\naccuracy = {0}'.format(accuracy)
+        </code>
+      </pre>
+      <h4 class="h4-code">Output</h4>
+      <p>
+        no. of Chris training emails: 7936<br>
+        no. of Sara training emails: 7884<br>
+        <br>
+        training time: 1.33 s<br>
+        predicting time: 0.203 s<br>
+
+        accuracy = 0.973265073948<br>
+      </p>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#svm">Lesson 2: SVM</button>
+  <div id="svm" class="collapse">
+    <br>
+    <a href="" ng-click="click_view('svm-exercise1', 'svm')"><h3>Exercise 1: SVM in SKlearn</h3></a>
+    <div ng-if="curr_view==='svm-exercise1'">
+      <h4 class="h4-code">SVM in SKlearn</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/svm')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/svm')
+
+
+          from class_vis import prettyPicture
+          from prep_terrain_data import makeTerrainData
+
+          import sys
+          import matplotlib.pyplot as plt
+          import copy
+          import numpy as np
+          import pylab as pl
+
+          from sklearn.metrics import accuracy_score
+
+
+          features_train, labels_train, features_test, labels_test = makeTerrainData()
+
+
+          ########################## SVM #################################
+          from sklearn.svm import SVC
+
+          def submitAccuracy():
+              return accuracy_score(pred, labels_test)
+
+          clf = SVC(kernel="linear")
+          clf.fit(features_train, labels_train)
+          pred = clf.predict(features_test)
+
+          print accuracy_score(pred, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span>0.92</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('svm-exercise2', 'svm')"><h3>Exercise 2: Kernel and Gamma</h3></a>
+    <div ng-if="curr_view==='svm-exercise2'">
+      <h4 class="h4-code">Kernel and Gamma</h4>
+      <pre>
+        <code class="python">
+          clf = SVC(kernel="linear", gamma=1.0)
+          clf.fit(features_train, labels_train)
+          pred = clf.predict(features_test)
+
+          %matplotlib inline
+          prettyPicture(clf, features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span><img src="/img/images/kernel_gamma.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('svm-exercise3', 'svm')"><h3>Exercise 3: SVM C Parameter</h3></a>
+    <div ng-if="curr_view==='svm-exercise3'">
+      <h4 class="h4-code">SVM C Parameter</h4>
+      <pre>
+        <code class="python">
+          clf = SVC(kernel="rbf", C=10**5)
+          clf.fit(features_train, labels_train)
+          pred = clf.predict(features_test)
+
+          %matplotlib inline
+          prettyPicture(clf, features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span<img src="/img/images/svm_c_param.png">></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('svm-exercise4', 'svm')"><h3>Exercise 4: SVM gamma Parameter</h3></a>
+    <div ng-if="curr_view==='svm-exercise4'">
+      <h4 class="h4-code">SVM gamma Parameter</h4>
+      <pre>
+        <code class="python">
+          clf = SVC(kernel="rbf", gamma=10)
+          clf.fit(features_train, labels_train)
+          pred = clf.predict(features_test)
+
+          %matplotlib inline
+          prettyPicture(clf, features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span><img src="/img/images/svm_gamma_param.png"></span>
+      </div>
+    </div>
+
+
+    <a href="" ng-click="click_view('svm-exercise5', 'svm')"><h3>Exercise 5: SVM Author ID Accuracy & Timing</h3></a>
+    <div ng-if="curr_view==='svm-exercise5'">
+      <h4 class="h4-code">SVM Author ID Accuracy & Timing</h4>
+      <pre>
+        <code class="python">
+
+          #!/usr/bin/python
+
+          """ 
+              This is the code to accompany the Lesson 2 (SVM) mini-project.
+
+              Use a SVM to identify emails from the Enron corpus by their authors:    
+              Sara has label 0
+              Chris has label 1
+          """
+          from sklearn.metrics import accuracy_score
+
+          from time import time
+          from email_preprocess import preprocess
+
+
+          ### features_train and features_test are the features for the training
+          ### and testing datasets, respectively
+          ### labels_train and labels_test are the corresponding item labels
+          features_train, features_test, labels_train, labels_test = preprocess()
+
+
+          def my_svm(features_train, features_test, labels_train, labels_test, kernel='linear', C=1.0):
+              # the classifier
+              clf = SVC(kernel=kernel, C=C)
+
+              # train
+              t0 = time()
+              clf.fit(features_train, labels_train)
+              print "\ntraining time:", round(time()-t0, 3), "s"
+
+              # predict
+              t0 = time()
+              pred = clf.predict(features_test)
+              print "predicting time:", round(time()-t0, 3), "s"
+
+              accuracy = accuracy_score(pred, labels_test)
+
+              print '\naccuracy = {0}'.format(accuracy)
+              return pred
+
+          pred = my_svm(features_train, features_test, labels_train, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b></span>
+        <pre class="comment">
+          <code>
+            No. of Chris Training emails: 7936
+            No. of Sara Training emails: 7884
+
+            Training time: 176.156 s
+            Predicting time: 18.561 s
+
+            Accuracy = 0.984072810011
+          </code>
+        </pre>
+        <span></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('svm-exercise6', 'svm')"><h3>Exercise 6: A Smaller Training Set</h3></a>
+    <div ng-if="curr_view==='svm-exercise6'">
+      <h4 class="h4-code">A Smaller Training Set</h4>
+      <pre>
+        <code class="python">
+          features_train2 = features_train[:len(features_train)/100] 
+          labels_train2 = labels_train[:len(labels_train)/100] 
+
+          pred = my_svm(features_train2, features_test, labels_train2, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span></span>
+        <pre class="comment">
+          <code>
+            Training time: 0.124 s
+            Predicting time: 1.123 s
+
+            Accuracy = 0.884527872582
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('svm-exercise7', 'svm')"><h3>Exercise 7: Deploy an RBF Kernel</h3></a>
+    <div ng-if="curr_view==='svm-exercise7'">
+      <h4 class="h4-code">Deploy an RBF Kernel</h4>
+      <pre>
+        <code class="python">
+          pred = my_svm(features_train2, features_test, labels_train2, labels_test, 'rbf')
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span></span>
+        <pre class="comment">
+          <code>
+            Training time: 0.128 s
+            Predicting time: 1.246 s
+
+            Accuracy = 0.616040955631
+          </code>
+        </pre>
+      </div>
+    </div>
+
+
+    <a href="" ng-click="click_view('svm-exercise8', 'svm')"><h3>Exercise 8: Optimize C Parameter</h3></a>
+    <div ng-if="curr_view==='svm-exercise8'">
+      <h4 class="h4-code">Optimize C Parameter</h4>
+      <pre>
+        <code class="python">
+          for C in [10, 100, 1000, 10000]:
+            print 'C =',C,
+            pred = my_svm(features_train2, features_test, labels_train2, labels_test, kernel='rbf', C=C)
+            print '\n\n'
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span></span>
+        <pre class="comment">
+          <code>
+            C = 10 
+          Training time: 0.133 s
+          Predicting time: 1.245 s
+
+          accuracy = 0.616040955631
+
+
+
+          C = 100 
+          Training time: 0.109 s
+          Predicting time: 1.244 s
+
+          accuracy = 0.616040955631
+
+
+
+          C = 1000 
+          Training time: 0.109 s
+          Predicting time: 1.19 s
+
+          accuracy = 0.821387940842
+
+
+
+          C = 10000 
+          Training time: 0.11 s
+          Predicting time: 1.006 s
+
+          Accuracy = 0.892491467577
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('svm-exercise9', 'svm')"><h3>Exercise 9: Optimized RBF vs. Linear SVM: Accuracy</h3></a>
+    <div ng-if="curr_view==='svm-exercise9'">
+      <h4 class="h4-code">Optimized RBF vs. Linear SVM: Accuracy</h4>
+      <pre>
+        <code class="python">
+          pred = my_svm(features_train, features_test, labels_train, labels_test, kernel='rbf', C=10000)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span></span>
+        <pre class="comment">
+          <code>
+            Training time: 116.73 s
+            Predicting time: 11.745 s
+
+            Accuracy = 0.990898748578
+
+            
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('svm-exercise10', 'svm')"><h3>Exercise 10: Extracting Predictions from an SVM</h3></a>
+    <div ng-if="curr_view==='svm-exercise10'">
+      <h4 class="h4-code">Extracting Predictions from an SVM</h4>
+      <pre>
+        <code class="python">
+          print pred[10]
+          print pred[26]
+          print pred[50]
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> <span></span>
+        <pre class="comment">
+          <code>
+            print pred[10] = 1
+            print pred[26] = 0
+            print pred[50] = 1
+          </code>
+        </pre>
+      </div>
+    </div>  
+
+    <a href="" ng-click="click_view('svm-exercise11', 'svm')"><h3>Exercise 11: How many Chris emails predicted?</h3></a>
+    <div ng-if="curr_view==='svm-exercise11'">
+      <h4 class="h4-code">How many Chris emails predicted?</h4>
+      <pre>
+        <code class="python">
+          print sum(pred)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span> 877<span></span>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#d_tree">Lesson 3: Decision Tree</button>
+  <div id="d_tree" class="collapse">
+    <a href="" ng-click="click_view('d_tree-exercise1', 'd_tree')"><h3>Exercise 1: Coding a Decision Tree</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise1'">
+      <h4 class="h4-code">Coding a Decision Tree</h4>
+      <pre>
+        <code class="python">
+          import sys
+          sys.path.append("C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/tools/")
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/choose_your_own')
+          sys.path.append('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/svm')
+
+          import os
+          os.chdir('C:/Users/Jeff/udacity/Intro_to_Machine_Learning/ud120-projects/decision_tree')
+
+
+          """ lecture and example code for decision tree unit """
+
+          import sys
+          from class_vis import prettyPicture, output_image
+          from prep_terrain_data import makeTerrainData
+
+          import matplotlib.pyplot as plt
+          import numpy as np
+          import pylab as pl
+
+          from sklearn import tree
+
+          features_train, labels_train, features_test, labels_test = makeTerrainData()
+
+
+          #def classify(features_train, labels_train, **kwargs):
+          #    clf = tree.DecisionTreeClassifier(**kwargs)
+          #    clf = clf.fit(features_train, labels_train)
+          #    return clf
+
+
+          ### the classify() function in classifyDT is where the magic
+          ### happens--it's your job to fill this in!
+          clf = tree.DecisionTreeClassifier()
+          clf = clf.fit(features_train, labels_train)
+
+
+
+          #### grader code, do not modify below this line
+          %matplotlib inline
+          prettyPicture(clf, features_test, labels_test)
+          #output_image("test.png", "png", open("test.png", "rb").read())
+          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span><img src="/img/images/coding_decision_tree.png"></span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise2', 'd_tree')"><h3>Exercise 2: Decision Tree Accuracy</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise2'">
+      <h4 class="h4-code">Decision Tree Accuracy</h4>
+      <pre>
+        <code class="python">
+          features_train, labels_train, features_test, labels_test = makeTerrainData()
+
+          ########################## DECISION TREE #################################
+
+
+          ### your code goes here--now create 2 decision tree classifiers,
+          ### one with min_samples_split=2 and one with min_samples_split=50
+          ### compute the accuracies on the testing data and store
+          ### the accuracy numbers to acc_min_samples_split_2 and
+          ### acc_min_samples_split_50, respectively
+
+          clf2 = tree.DecisionTreeClassifier(min_samples_split=2)
+          clf2 = clf2.fit(features_train, labels_train)
+
+          clf50 = tree.DecisionTreeClassifier(min_samples_split=50)
+          clf50 = clf50.fit(features_train, labels_train)
+          #clf50 = classify(features_train, labels_train, min_samples_split=50)
+          #clf = tree.DecisionTreeClassifier(min_samples_split=50).fit(features_train, labels_train)
+
+          acc_min_samples_split_2 = clf2.score(features_test, labels_test)
+          acc_min_samples_split_50 = clf50.score(features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.908</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise3', 'd_tree')"><h3>Exercise 3: Entropy Calculation Part 5</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise3'">
+      <h4 class="h4-code">Entropy Calculation Part 5</h4>
+      <pre>
+        <code class="python">
+          import scipy.stats
+
+          pk = [0.5, 0.5]
+          print scipy.stats.entropy(pk, base=2)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>1.0</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise4', 'd_tree')"><h3>Exercise 4: Information Gain Calculation Part 5</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise4'">
+      <h4 class="h4-code">Information Gain Calculation Part 5</h4>
+      <pre>
+        <code class="python">
+          print scipy.stats.entropy([1,2], base=2)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.918295834054</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise5', 'd_tree')"><h3>Exercise 5: Information Gain Calculation Part 6</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise5'">
+      <h4 class="h4-code">Information Gain Calculation Part 6</h4>
+      <pre>
+        <code class="python">
+          print 1-0.75*scipy.stats.entropy([1,2], base=2)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.311278124459</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise6', 'd_tree')"><h3>Exercise 6: Your First Email DT: Accuracy</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise6'">
+      <h4 class="h4-code">Your First Email DT: Accuracy</h4>
+      <pre>
+        <code class="python">
+          """ 
+              This is the code to accompany the Lesson 3 (decision tree) mini-project.
+
+              Use a Decision Tree to identify emails from the Enron corpus by author:    
+              Sara has label 0
+              Chris has label 1
+          """
+              
+          from time import time
+          from email_preprocess import preprocess
+
+
+          ### features_train and features_test are the features for the training
+          ### and testing datasets, respectively
+          ### labels_train and labels_test are the corresponding item labels
+          features_train, features_test, labels_train, labels_test = preprocess()
+
+
+
+
+          #########################################################
+          ### your code goes here ###
+          clf = tree.DecisionTreeClassifier(min_samples_split=40)
+          clf = clf.fit(features_train, labels_train)
+
+          print clf.score(features_test, labels_test)
+          
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            No. of Chris Training Emails: 7936
+            No. of Sara Training Emails: 7884
+            0.978384527873
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise7', 'd_tree')"><h3>Exercise 7: Speeding Up Via Feature Selection 1</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise7'">
+      <h4 class="h4-code">Speeding Up Via Feature Selection 1</h4>
+      <pre>
+        <code class="python">
+          print features_train.shape
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>(15820L, 3785L)</span>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise8', 'd_tree')"><h3>Exercise 8: Changing the Number of Features</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise8'">
+      <h4 class="h4-code">Changing the Number of Features</h4>
+      <pre>
+        <code class="python">
+          # I made "percentile" an input argument for preprocess with default value 10
+          features_train, features_test, labels_train, labels_test = preprocess(percentile=1)
+          print features_train.shape
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span></span>
+        <pre class="comment">
+          <code>
+            No. of Chris Training emails: 7936
+            No. of Sara Training emails: 7884
+            (15820L, 379L)
+          </code>
+        </pre>
+      </div>
+    </div>
+
+    <a href="" ng-click="click_view('d_tree-exercise9', 'd_tree')"><h3>Exercise 9: Accuracy Using 1% of Features</h3></a>
+    <div ng-if="curr_view==='d_tree-exercise9'">
+      <h4 class="h4-code">Accuracy Using 1% of Features</h4>
+      <pre>
+        <code class="python">
+          clf = tree.DecisionTreeClassifier(min_samples_split=40)
+          clf = clf.fit(features_train, labels_train)
+
+          print clf.score(features_test, labels_test)
+        </code>
+      </pre>
+      <div class="code-output">
+        <span class='output-title'><b>Output:</b> </span><span>0.967007963595</span>
+      </div>
+    </div>
+
+
+
+    
+  </div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 4: Choose Your Own Algorithm</button>
+  <div id="own_algo" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 5: Datasets and Question</button>
+  <div id="dataset" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 6: Regressions</button>
+  <div id="regression" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 7: Outliers</button>
+  <div id="outliers" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 8: Clustering</button>
+  <div id="clustering" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 9: Feature Scaling</button>
+  <div id="f_scaling" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 10: Text Learning</button>
+  <div id="text_learning" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 11: Feature Selection</button>
+  <div id="feature_selection" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 12: PCA</button>
+  <div id="pca" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 13: Validation</button>
+  <div id="validation" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 14: Evaluation Metrices</button>
+  <div id="evaluation_metrices" class="collapse"></div>
+  <button type="button" class="btn btn-info set-block-b" data-toggle="collapse" data-target="#naive_bayes">Lesson 15: Final Project</button>
+  <div id="final_project" class="collapse"></div>
+</div>
+
+
+<!-- <div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+      <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
+
+      <h2 class="section-heading">The Final Frontier</h2>
+
+      <p> </p>
+      <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
+      <h2 class="section-heading">Reaching for the Stars</h2>
+
+      <p> has to change a man.</p>
+
+      <span class="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
+    </div>
+  </div>
+</div> -->
